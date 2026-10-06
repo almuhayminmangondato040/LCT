@@ -1,0 +1,3097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOGIC LAB // Critical Thinking</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+:root{
+    --bg:#050812;
+    --panel:rgba(10,16,29,.88);
+    --panel2:rgba(16,24,42,.88);
+    --line:rgba(120,155,205,.20);
+    --text:#eef7ff;
+    --muted:#8796ad;
+    --cyan:#4de7ff;
+    --blue:#6e8cff;
+    --violet:#b17cff;
+    --green:#5df2a6;
+    --red:#ff5d73;
+    --yellow:#ffd76b;
+}
+
+body{
+    font-family:"Segoe UI",Arial,sans-serif;
+    min-height:100vh;
+    color:var(--text);
+    background:
+        radial-gradient(circle at 10% 10%,rgba(77,231,255,.10),transparent 28%),
+        radial-gradient(circle at 90% 15%,rgba(177,124,255,.11),transparent 28%),
+        radial-gradient(circle at 50% 100%,rgba(110,140,255,.10),transparent 35%),
+        var(--bg);
+    overflow-x:hidden;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background-image:
+        linear-gradient(rgba(100,130,180,.045) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(100,130,180,.045) 1px,transparent 1px);
+    background-size:40px 40px;
+    mask-image:linear-gradient(to bottom,black,transparent 92%);
+}
+
+.scanline{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:50;
+    background:repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,.012) 0,
+        rgba(255,255,255,.012) 1px,
+        transparent 1px,
+        transparent 4px
+    );
+}
+
+.particles{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+}
+
+.particle{
+    position:absolute;
+    width:3px;
+    height:3px;
+    border-radius:50%;
+    background:var(--cyan);
+    opacity:.4;
+    animation:float 9s linear infinite;
+}
+
+.particle:nth-child(1){left:8%;top:90%}
+.particle:nth-child(2){left:19%;top:70%;animation-delay:2s}
+.particle:nth-child(3){left:33%;top:80%;animation-delay:3s}
+.particle:nth-child(4){left:48%;top:95%;animation-delay:1s}
+.particle:nth-child(5){left:64%;top:76%;animation-delay:4s}
+.particle:nth-child(6){left:79%;top:88%;animation-delay:2.5s}
+.particle:nth-child(7){left:93%;top:72%;animation-delay:5s}
+
+@keyframes float{
+    from{
+        transform:translateY(0) scale(1);
+        opacity:.15;
+    }
+    50%{
+        opacity:.75;
+    }
+    to{
+        transform:translateY(-100vh) scale(.2);
+        opacity:0;
+    }
+}
+
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(14px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+@keyframes spin{
+    to{transform:rotate(360deg)}
+}
+
+@keyframes pulse{
+    50%{opacity:.3}
+}
+
+@keyframes shake{
+    20%{transform:translateX(-5px)}
+    40%{transform:translateX(5px)}
+    60%{transform:translateX(-3px)}
+    80%{transform:translateX(3px)}
+}
+
+.app{
+    position:relative;
+    z-index:2;
+    width:min(1500px,95%);
+    margin:auto;
+    min-height:100vh;
+    padding:24px 0;
+}
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 20px;
+    border:1px solid var(--line);
+    border-radius:18px;
+    background:rgba(7,12,22,.78);
+    backdrop-filter:blur(18px);
+    margin-bottom:22px;
+    box-shadow:0 18px 55px rgba(0,0,0,.3);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.brand-core{
+    width:43px;
+    height:43px;
+    border-radius:13px;
+    border:1px solid rgba(77,231,255,.45);
+    display:grid;
+    place-items:center;
+    position:relative;
+    box-shadow:0 0 28px rgba(77,231,255,.10);
+}
+
+.brand-core::before,
+.brand-core::after{
+    content:"";
+    position:absolute;
+    border:1px solid rgba(77,231,255,.28);
+    border-radius:50%;
+    animation:spin 5s linear infinite;
+}
+
+.brand-core::before{
+    width:24px;
+    height:24px;
+    border-left-color:transparent;
+}
+
+.brand-core::after{
+    width:15px;
+    height:15px;
+    border-right-color:transparent;
+    animation-direction:reverse;
+}
+
+.brand-dot{
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:var(--cyan);
+    box-shadow:0 0 14px var(--cyan);
+    z-index:2;
+}
+
+.brand-title{
+    font-size:15px;
+    font-weight:900;
+    letter-spacing:2px;
+}
+
+.brand-sub{
+    color:var(--muted);
+    font-size:10px;
+    letter-spacing:1.3px;
+    margin-top:3px;
+}
+
+.status{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    color:var(--muted);
+    font-size:10px;
+    letter-spacing:1px;
+}
+
+.status-dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:var(--green);
+    box-shadow:0 0 13px var(--green);
+    animation:pulse 1.8s infinite;
+}
+
+.screen{
+    display:none;
+    animation:fadeUp .4s ease;
+}
+
+.screen.active{
+    display:block;
+}
+
+/* MENU */
+
+.hero{
+    text-align:center;
+    padding:35px 10px 28px;
+}
+
+.hero-label{
+    display:inline-block;
+    color:var(--cyan);
+    border:1px solid rgba(77,231,255,.25);
+    background:rgba(77,231,255,.05);
+    border-radius:999px;
+    padding:7px 13px;
+    font-size:9px;
+    letter-spacing:2px;
+    margin-bottom:16px;
+}
+
+.hero h1{
+    font-size:clamp(42px,7vw,80px);
+    line-height:.88;
+    letter-spacing:-4px;
+    font-weight:950;
+}
+
+.hero h1 span{
+    color:var(--cyan);
+    text-shadow:0 0 35px rgba(77,231,255,.28);
+}
+
+.hero p{
+    max-width:760px;
+    margin:20px auto 0;
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.7;
+}
+
+.dashboard{
+    display:grid;
+    grid-template-columns:1.45fr 1fr;
+    gap:18px;
+}
+
+.panel{
+    border:1px solid var(--line);
+    background:var(--panel);
+    border-radius:20px;
+    backdrop-filter:blur(15px);
+    box-shadow:0 18px 60px rgba(0,0,0,.28);
+}
+
+.panel-header{
+    padding:18px 20px;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.panel-header h2{
+    font-size:11px;
+    letter-spacing:1.7px;
+    text-transform:uppercase;
+}
+
+.panel-header span{
+    color:var(--muted);
+    font-size:9px;
+    letter-spacing:1px;
+}
+
+/* MODULES */
+
+.modules{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+    padding:18px;
+}
+
+.module{
+    position:relative;
+    overflow:hidden;
+    text-align:left;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.015);
+    border-radius:15px;
+    padding:17px;
+    color:var(--text);
+    cursor:pointer;
+    transition:.25s;
+}
+
+.module:hover{
+    transform:translateY(-3px);
+    border-color:rgba(77,231,255,.4);
+    background:rgba(77,231,255,.03);
+}
+
+.module.selected{
+    border-color:var(--cyan);
+    background:rgba(77,231,255,.06);
+    box-shadow:
+        0 0 0 1px rgba(77,231,255,.12),
+        0 0 30px rgba(77,231,255,.08);
+}
+
+.module-number{
+    color:var(--cyan);
+    font-size:9px;
+    letter-spacing:1.5px;
+    margin-bottom:8px;
+}
+
+.module h3{
+    font-size:14px;
+    margin-bottom:6px;
+}
+
+.module p{
+    color:var(--muted);
+    font-size:10px;
+    line-height:1.5;
+}
+
+/* SETTINGS */
+
+.settings{
+    padding:20px;
+}
+
+.setting-block{
+    margin-bottom:21px;
+}
+
+.setting-title{
+    color:var(--muted);
+    font-size:9px;
+    letter-spacing:1.4px;
+    text-transform:uppercase;
+    margin-bottom:10px;
+}
+
+.count-buttons{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:7px;
+}
+
+.count-btn{
+    border:1px solid var(--line);
+    color:var(--muted);
+    background:rgba(255,255,255,.02);
+    border-radius:9px;
+    padding:10px 5px;
+    cursor:pointer;
+    font-weight:800;
+    font-size:11px;
+    transition:.2s;
+}
+
+.count-btn:hover{
+    color:var(--text);
+    border-color:rgba(77,231,255,.35);
+}
+
+.count-btn.selected{
+    color:var(--cyan);
+    border-color:var(--cyan);
+    background:rgba(77,231,255,.07);
+    box-shadow:0 0 18px rgba(77,231,255,.08);
+}
+
+.system-readout{
+    border:1px solid var(--line);
+    border-radius:13px;
+    padding:13px;
+    background:rgba(0,0,0,.18);
+    font-family:Consolas,monospace;
+    font-size:9px;
+    color:var(--muted);
+    line-height:1.9;
+}
+
+.system-readout b{
+    color:var(--text);
+    font-weight:500;
+}
+
+.system-readout .good{
+    color:var(--green);
+}
+
+.start-btn{
+    width:100%;
+    border:none;
+    padding:15px;
+    border-radius:12px;
+    background:linear-gradient(135deg,#35d8ef,#6d7cff);
+    color:#041019;
+    font-weight:950;
+    letter-spacing:1.4px;
+    cursor:pointer;
+    transition:.25s;
+    box-shadow:0 0 28px rgba(77,231,255,.15);
+}
+
+.start-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 12px 35px rgba(77,231,255,.2);
+}
+
+/* QUIZ */
+
+.quiz-top{
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    align-items:center;
+    gap:12px;
+    margin-bottom:15px;
+}
+
+.quiz-module{
+    color:var(--cyan);
+    font-size:10px;
+    letter-spacing:1.4px;
+}
+
+.quiz-count{
+    font-weight:900;
+    font-size:13px;
+}
+
+.quiz-score{
+    text-align:right;
+    color:var(--muted);
+    font-size:11px;
+}
+
+.progress-wrap{
+    height:5px;
+    background:rgba(255,255,255,.055);
+    border-radius:999px;
+    overflow:hidden;
+    margin-bottom:18px;
+}
+
+.progress-bar{
+    width:0%;
+    height:100%;
+    background:linear-gradient(90deg,var(--cyan),var(--violet));
+    box-shadow:0 0 15px rgba(77,231,255,.3);
+    transition:width .4s;
+}
+
+.quiz-grid{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 300px;
+    gap:18px;
+    align-items:start;
+}
+
+.question-panel{
+    padding:26px;
+}
+
+.question-meta{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.tag{
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:6px 9px;
+    font-size:8px;
+    text-transform:uppercase;
+    letter-spacing:1.3px;
+    color:var(--muted);
+}
+
+.tag.logic{
+    color:var(--cyan);
+    border-color:rgba(77,231,255,.25);
+}
+
+.tag.hard{
+    color:var(--yellow);
+    border-color:rgba(255,215,107,.25);
+}
+
+.question-number{
+    margin-left:auto;
+    color:var(--muted);
+    font-size:9px;
+    letter-spacing:1px;
+}
+
+.question{
+    font-size:clamp(22px,3vw,34px);
+    line-height:1.25;
+    letter-spacing:-.5px;
+    margin-bottom:24px;
+}
+
+.question em{
+    color:var(--cyan);
+    font-style:normal;
+}
+
+.choices{
+    display:grid;
+    gap:10px;
+}
+
+.choice{
+    width:100%;
+    display:flex;
+    gap:13px;
+    align-items:center;
+    text-align:left;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.018);
+    color:var(--text);
+    border-radius:14px;
+    padding:15px;
+    cursor:pointer;
+    transition:.18s;
+}
+
+.choice:hover:not(.disabled){
+    transform:translateX(4px);
+    border-color:rgba(77,231,255,.42);
+    background:rgba(77,231,255,.035);
+}
+
+.choice.disabled{
+    cursor:default;
+}
+
+.choice-letter{
+    width:31px;
+    min-width:31px;
+    height:31px;
+    display:grid;
+    place-items:center;
+    border:1px solid var(--line);
+    border-radius:9px;
+    color:var(--muted);
+    font-weight:900;
+    font-size:10px;
+}
+
+.choice-text{
+    font-size:12px;
+    line-height:1.45;
+}
+
+.choice.correct{
+    border-color:rgba(93,242,166,.72);
+    background:rgba(93,242,166,.08);
+}
+
+.choice.correct .choice-letter{
+    border-color:var(--green);
+    color:var(--green);
+}
+
+.choice.selected-wrong{
+    border-color:rgba(255,93,115,.75);
+    background:rgba(255,93,115,.08);
+    animation:shake .38s;
+}
+
+.choice.selected-wrong .choice-letter{
+    border-color:var(--red);
+    color:var(--red);
+}
+
+.explanation-panel{
+    display:none;
+    margin-top:20px;
+    padding:18px;
+    border-radius:14px;
+    border:1px solid rgba(77,231,255,.16);
+    background:rgba(77,231,255,.025);
+    animation:fadeUp .3s;
+}
+
+.explanation-panel.show{
+    display:block;
+}
+
+.explanation-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:13px;
+}
+
+.explanation-head strong{
+    font-size:11px;
+    letter-spacing:1.2px;
+}
+
+.result-chip{
+    font-size:8px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    padding:5px 8px;
+    border-radius:99px;
+}
+
+.result-chip.correct{
+    color:var(--green);
+    background:rgba(93,242,166,.1);
+}
+
+.result-chip.wrong{
+    color:var(--red);
+    background:rgba(255,93,115,.1);
+}
+
+.explain-item{
+    border-top:1px solid rgba(117,151,199,.10);
+    padding:10px 0;
+    color:var(--muted);
+    font-size:10px;
+    line-height:1.6;
+}
+
+.explain-item strong{
+    color:var(--text);
+}
+
+.explain-item.is-correct strong{
+    color:var(--green);
+}
+
+.explain-item.is-selected-wrong strong{
+    color:var(--red);
+}
+
+.next-btn{
+    width:100%;
+    margin-top:14px;
+    padding:13px;
+    border:1px solid rgba(77,231,255,.26);
+    border-radius:11px;
+    background:rgba(77,231,255,.06);
+    color:var(--cyan);
+    cursor:pointer;
+    font-weight:850;
+    letter-spacing:1px;
+}
+
+/* ANALYZER */
+
+.analyzer{
+    padding:18px;
+    position:sticky;
+    top:18px;
+}
+
+.analyzer-title{
+    color:var(--muted);
+    font-size:9px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    margin-bottom:15px;
+}
+
+.core-graphic{
+    width:190px;
+    height:190px;
+    margin:8px auto 20px;
+    display:grid;
+    place-items:center;
+    position:relative;
+}
+
+.ring{
+    position:absolute;
+    border-radius:50%;
+    border:1px solid rgba(77,231,255,.20);
+    animation:spin 8s linear infinite;
+}
+
+.ring.one{
+    width:100%;
+    height:100%;
+    border-top-color:var(--cyan);
+}
+
+.ring.two{
+    width:72%;
+    height:72%;
+    border-right-color:var(--violet);
+    animation-direction:reverse;
+    animation-duration:5s;
+}
+
+.ring.three{
+    width:45%;
+    height:45%;
+    border-bottom-color:var(--green);
+    animation-duration:4s;
+}
+
+.core-center{
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    background:radial-gradient(circle,var(--cyan),rgba(77,231,255,.12) 30%,transparent 70%);
+    box-shadow:0 0 45px rgba(77,231,255,.18);
+}
+
+.node{
+    position:absolute;
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:var(--cyan);
+    box-shadow:0 0 12px var(--cyan);
+}
+
+.n1{top:11px}
+.n2{right:16px;top:80px}
+.n3{bottom:11px}
+.n4{left:16px;top:80px}
+
+.analyzer-lines{
+    display:grid;
+    gap:10px;
+}
+
+.meter-row{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:7px;
+    align-items:center;
+}
+
+.meter-label{
+    color:var(--muted);
+    font-size:9px;
+}
+
+.meter-value{
+    color:var(--cyan);
+    font-family:Consolas,monospace;
+    font-size:9px;
+}
+
+.meter{
+    grid-column:1/-1;
+    height:4px;
+    background:rgba(255,255,255,.06);
+    border-radius:99px;
+    overflow:hidden;
+}
+
+.meter>div{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,var(--cyan),var(--violet));
+    transition:.4s;
+}
+
+.shortcut-box{
+    margin-top:20px;
+    border-top:1px solid var(--line);
+    padding-top:15px;
+    color:var(--muted);
+    font-size:9px;
+    line-height:1.8;
+}
+
+kbd{
+    display:inline-block;
+    min-width:20px;
+    padding:1px 5px;
+    text-align:center;
+    border:1px solid var(--line);
+    border-bottom-color:rgba(255,255,255,.25);
+    border-radius:5px;
+    background:rgba(255,255,255,.03);
+    color:var(--text);
+    font-family:Consolas,monospace;
+}
+
+/* RESULTS */
+
+.results{
+    max-width:820px;
+    margin:50px auto;
+    text-align:center;
+}
+
+.result-core{
+    width:155px;
+    height:155px;
+    margin:0 auto 24px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    position:relative;
+    border:1px solid rgba(77,231,255,.22);
+    background:radial-gradient(circle,rgba(77,231,255,.14),transparent 58%);
+    box-shadow:0 0 55px rgba(77,231,255,.08);
+}
+
+.result-core::before{
+    content:"";
+    position:absolute;
+    inset:12px;
+    border:1px dashed rgba(77,231,255,.35);
+    border-radius:50%;
+    animation:spin 7s linear infinite;
+}
+
+.result-score{
+    color:var(--cyan);
+    font-size:40px;
+    font-weight:950;
+}
+
+.result-label{
+    color:var(--muted);
+    font-size:8px;
+    letter-spacing:2px;
+}
+
+.results h2{
+    font-size:36px;
+    margin-bottom:10px;
+}
+
+.results p{
+    color:var(--muted);
+    line-height:1.7;
+    font-size:13px;
+}
+
+.result-stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin:25px 0;
+}
+
+.stat{
+    padding:16px;
+    border:1px solid var(--line);
+    border-radius:13px;
+    background:var(--panel);
+}
+
+.stat-value{
+    font-size:21px;
+    font-weight:950;
+}
+
+.stat-label{
+    color:var(--muted);
+    font-size:8px;
+    letter-spacing:1.2px;
+    text-transform:uppercase;
+    margin-top:4px;
+}
+
+.result-buttons{
+    display:flex;
+    gap:10px;
+}
+
+.result-buttons button{
+    flex:1;
+    padding:14px;
+    border-radius:11px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.025);
+    color:var(--text);
+    cursor:pointer;
+    font-weight:850;
+    letter-spacing:1px;
+}
+
+.result-buttons .primary{
+    color:var(--cyan);
+    border-color:rgba(77,231,255,.28);
+    background:rgba(77,231,255,.07);
+}
+
+.footer{
+    text-align:center;
+    color:rgba(131,146,171,.55);
+    font-size:8px;
+    letter-spacing:1.5px;
+    padding:25px 0 8px;
+}
+
+@media(max-width:1000px){
+    .dashboard,
+    .quiz-grid{
+        grid-template-columns:1fr;
+    }
+
+    .analyzer{
+        position:static;
+    }
+}
+
+@media(max-width:650px){
+    .app{
+        width:94%;
+        padding-top:12px;
+    }
+
+    .brand-sub{
+        display:none;
+    }
+
+    .hero h1{
+        font-size:46px;
+    }
+
+    .modules{
+        grid-template-columns:1fr;
+    }
+
+    .count-buttons{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .quiz-top{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .quiz-score{
+        display:none;
+    }
+
+    .question-panel{
+        padding:18px;
+    }
+
+    .result-stats{
+        grid-template-columns:1fr;
+    }
+
+    .result-buttons{
+        flex-direction:column;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="scanline"></div>
+
+<div class="particles">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+</div>
+
+<div class="app">
+
+<div class="topbar">
+    <div class="brand">
+        <div class="brand-core">
+            <div class="brand-dot"></div>
+        </div>
+        <div>
+            <div class="brand-title">LOGIC LAB</div>
+            <div class="brand-sub">CRITICAL THINKING // ANALYSIS SYSTEM</div>
+        </div>
+    </div>
+
+    <div class="status">
+        <span class="status-dot"></span>
+        SYSTEM READY
+    </div>
+</div>
+
+
+<!-- MENU -->
+
+<section id="menuScreen" class="screen active">
+
+<div class="hero">
+    <div class="hero-label">REASONING TRAINING PROTOCOL</div>
+
+    <h1>
+        THINK.<br>
+        <span>QUESTION.</span><br>
+        CONCLUDE.
+    </h1>
+
+    <p>
+        Test logic, critical thinking, judgment, propositions,
+        inference, arguments, syllogisms, validity, soundness,
+        and the operations of the human mind.
+    </p>
+</div>
+
+
+<div class="dashboard">
+
+<div class="panel">
+
+<div class="panel-header">
+    <h2>Knowledge Modules</h2>
+    <span id="moduleStatus">ALL MODULES</span>
+</div>
+
+<div class="modules">
+
+<button class="module selected" data-chapter="all">
+    <div class="module-number">ALL MODULES</div>
+    <h3>Full Logic Core</h3>
+    <p>Chapters 1–5 combined into the complete reasoning pool.</p>
+</button>
+
+<button class="module" data-chapter="1">
+    <div class="module-number">MODULE 01</div>
+    <h3>Correct Thinking</h3>
+    <p>Philosophy, wonder, logic, critical thinking, metaphysics.</p>
+</button>
+
+<button class="module" data-chapter="2">
+    <div class="module-number">MODULE 02</div>
+    <h3>Health Sciences</h3>
+    <p>Clinical reasoning, standards, assumptions, evidence, dignity.</p>
+</button>
+
+<button class="module" data-chapter="3">
+    <div class="module-number">MODULE 03</div>
+    <h3>Operations of Mind</h3>
+    <p>Simple apprehension, concepts, terms, ideogenesis.</p>
+</button>
+
+<button class="module" data-chapter="4">
+    <div class="module-number">MODULE 04</div>
+    <h3>Judgment & Propositions</h3>
+    <p>A/E/I/O, S-P-C, Square of Opposition, distribution.</p>
+</button>
+
+<button class="module" data-chapter="5">
+    <div class="module-number">MODULE 05</div>
+    <h3>Reasoning & Syllogism</h3>
+    <p>Arguments, inference, validity, soundness, syllogisms.</p>
+</button>
+
+</div>
+</div>
+
+
+<div class="panel">
+
+<div class="panel-header">
+    <h2>System Configuration</h2>
+    <span>HIGH CAPACITY</span>
+</div>
+
+<div class="settings">
+
+<div class="setting-block">
+
+<div class="setting-title">Question Load</div>
+
+<div class="count-buttons">
+
+<button class="count-btn" data-count="10">10</button>
+<button class="count-btn selected" data-count="20">20</button>
+<button class="count-btn" data-count="30">30</button>
+<button class="count-btn" data-count="40">40</button>
+<button class="count-btn" data-count="50">50</button>
+<button class="count-btn" data-count="75">75</button>
+<button class="count-btn" data-count="100">100</button>
+
+</div>
+</div>
+
+
+<div class="setting-block">
+
+<div class="setting-title">System Readout</div>
+
+<div class="system-readout">
+QUESTION BANK: <b>100 ITEMS</b><br>
+QUESTION ORDER: <b class="good">RANDOMIZED</b><br>
+CHOICE ORDER: <b class="good">RANDOMIZED</b><br>
+EXPLANATIONS: <b class="good">ENABLED</b><br>
+INPUT: <b class="good">A / B / C / D</b><br>
+MAX LOAD: <b>100 QUESTIONS</b><br>
+MODE: <b>CRITICAL THINKING</b>
+</div>
+
+</div>
+
+<button class="start-btn" id="startBtn">
+    INITIALIZE ANALYSIS →
+</button>
+
+</div>
+</div>
+
+</div>
+
+<div class="footer">
+LOGIC LAB // 100-QUESTION REASONING CORE
+</div>
+
+</section>
+
+
+<!-- QUIZ -->
+
+<section id="quizScreen" class="screen">
+
+<div class="quiz-top">
+
+<div class="quiz-module" id="quizModule">
+CHAPTER 1 // CORRECT THINKING
+</div>
+
+<div class="quiz-count" id="quizCount">
+01 / 20
+</div>
+
+<div class="quiz-score">
+SCORE: <b id="scoreDisplay">0</b>
+</div>
+
+</div>
+
+<div class="progress-wrap">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+
+
+<div class="quiz-grid">
+
+<div class="panel question-panel">
+
+<div class="question-meta">
+
+<span class="tag logic">REASONING</span>
+<span class="tag hard" id="difficultyTag">CORE</span>
+
+<span class="question-number" id="questionNumber">
+QUESTION 01
+</span>
+
+</div>
+
+<div class="question" id="questionText"></div>
+
+<div class="choices" id="choicesContainer"></div>
+
+
+<div class="explanation-panel" id="explanationPanel">
+
+<div class="explanation-head">
+
+<strong>ANALYSIS REPORT</strong>
+
+<span class="result-chip" id="resultChip"></span>
+
+</div>
+
+<div id="explanationsContainer"></div>
+
+<button class="next-btn" id="nextBtn">
+NEXT ANALYSIS →
+</button>
+
+</div>
+
+</div>
+
+
+<aside class="panel analyzer">
+
+<div class="analyzer-title">
+COGNITIVE ANALYZER
+</div>
+
+<div class="core-graphic">
+
+<div class="ring one"></div>
+<div class="ring two"></div>
+<div class="ring three"></div>
+
+<div class="node n1"></div>
+<div class="node n2"></div>
+<div class="node n3"></div>
+<div class="node n4"></div>
+
+<div class="core-center"></div>
+
+</div>
+
+
+<div class="analyzer-lines">
+
+<div class="meter-row">
+<span class="meter-label">Reasoning Accuracy</span>
+<span class="meter-value" id="accuracyValue">0%</span>
+
+<div class="meter">
+<div id="accuracyMeter"></div>
+</div>
+</div>
+
+
+<div class="meter-row">
+<span class="meter-label">Analysis Progress</span>
+<span class="meter-value" id="progressValue">0%</span>
+
+<div class="meter">
+<div id="progressMeter"></div>
+</div>
+</div>
+
+
+<div class="meter-row">
+<span class="meter-label">Logic Signal</span>
+<span class="meter-value" id="logicSignal">STANDBY</span>
+</div>
+
+</div>
+
+
+<div class="shortcut-box">
+<b>KEYBOARD CONTROL</b><br>
+<kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd> <kbd>D>
+select answer<br>
+<kbd>ENTER</kbd> continue
+</div>
+
+</aside>
+
+</div>
+
+</section>
+
+
+<!-- RESULTS -->
+
+<section id="resultScreen" class="screen">
+
+<div class="results">
+
+<div class="result-core">
+
+<div>
+<div class="result-score" id="finalScore">0/20</div>
+<div class="result-label">ANALYSIS SCORE</div>
+</div>
+
+</div>
+
+<h2 id="resultTitle">
+ANALYSIS COMPLETE
+</h2>
+
+<p id="resultMessage">
+Your reasoning session has finished.
+</p>
+
+
+<div class="result-stats">
+
+<div class="stat">
+<div class="stat-value" id="correctStat">0</div>
+<div class="stat-label">Correct</div>
+</div>
+
+<div class="stat">
+<div class="stat-value" id="wrongStat">0</div>
+<div class="stat-label">Needs Review</div>
+</div>
+
+<div class="stat">
+<div class="stat-value" id="accuracyStat">0%</div>
+<div class="stat-label">Accuracy</div>
+</div>
+
+</div>
+
+
+<div class="result-buttons">
+
+<button class="primary" id="retryBtn">
+RUN AGAIN
+</button>
+
+<button id="menuBtn">
+RETURN TO LAB
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   LOGIC LAB
+   100-QUESTION BANK
+========================================================= */
+
+const questionBank = [
+
+/* =========================
+   CHAPTER 1
+========================= */
+
+{
+chapter:1,difficulty:"CORE",
+q:"What is philosophy primarily described as?",
+choices:[
+{t:"A disciplined search for wisdom",e:"Correct. Philosophy is a disciplined search for wisdom through questioning, reflection, argument, and judgment."},
+{t:"A collection of opinions",e:"Incorrect. Philosophy requires careful questioning and reasoning rather than simply collecting opinions."},
+{t:"A study of popularity",e:"Incorrect. Popularity is not the basis of philosophical inquiry."},
+{t:"A rejection of reasoning",e:"Incorrect. Reasoned judgment is central to philosophy."}
+],answer:0},
+
+{
+chapter:1,difficulty:"CORE",
+q:"What does logic study as a science?",
+choices:[
+{t:"Principles of valid reasoning",e:"Correct. Logic as a science studies principles, rules, and structures of valid reasoning."},
+{t:"Personal emotions",e:"Incorrect. Emotions are not the primary subject of logic."},
+{t:"Social popularity",e:"Incorrect. Popularity does not determine logical validity."},
+{t:"Physical measurements",e:"Incorrect. Physical measurement belongs to observation and scientific investigation."}
+],answer:0},
+
+{
+chapter:1,difficulty:"CORE",
+q:"What is critical thinking?",
+choices:[
+{t:"Thinking with care",e:"Correct. Critical thinking involves examining ideas, asking for reasons, and avoiding automatic acceptance or rejection."},
+{t:"Agreeing with experts automatically",e:"Incorrect. Critical thinking still examines reasons and evidence."},
+{t:"Rejecting every claim",e:"Incorrect. Critical thinking does not mean automatic rejection."},
+{t:"Trusting the first explanation",e:"Incorrect. Critical thinking avoids premature conclusions."}
+],answer:0},
+
+{
+chapter:1,difficulty:"CORE",
+q:"What is identified as the beginning of philosophy?",
+choices:[
+{t:"Wonder",e:"Correct. The chapter identifies wonder, associated with Plato, as the beginning of philosophy."},
+{t:"Certainty",e:"Incorrect. Philosophical inquiry often begins by questioning what is assumed."},
+{t:"Popularity",e:"Incorrect. Popularity is unrelated to the beginning of philosophy."},
+{t:"Memorization",e:"Incorrect. Memorization is not identified as the beginning of philosophy."}
+],answer:0},
+
+{
+chapter:1,difficulty:"HARD",
+q:"Which question is most consistent with critical thinking?",
+choices:[
+{t:"What evidence supports this?",e:"Correct. Critical thinking examines reasons and supporting evidence."},
+{t:"Who believes this?",e:"Incorrect. Knowing who believes something does not establish its truth."},
+{t:"Is this popular?",e:"Incorrect. Popularity is not sufficient evidence."},
+{t:"Does this sound good?",e:"Incorrect. Sounding convincing does not guarantee correctness."}
+],answer:0},
+
+{
+chapter:1,difficulty:"HARD",
+q:"A health claim is widely shared online. What should be examined first?",
+choices:[
+{t:"Its evidence and source",e:"Correct. The claim should be checked against reliable medical sources and supporting evidence."},
+{t:"Its number of shares",e:"Incorrect. Popularity does not prove truth."},
+{t:"Its emotional appeal",e:"Incorrect. Emotional appeal does not establish factual accuracy."},
+{t:"Its formatting",e:"Incorrect. Formatting does not establish whether a health claim is true."}
+],answer:0},
+
+{
+chapter:1,difficulty:"HARD",
+q:"A student says, “I am afraid of this procedure, so it must be dangerous.” What is missing?",
+choices:[
+{t:"Evidence about risks and benefits",e:"Correct. Fear does not prove danger; relevant information and evidence are needed."},
+{t:"More fear",e:"Incorrect. Additional fear would not establish danger."},
+{t:"Popularity",e:"Incorrect. Popularity would not prove safety or danger."},
+{t:"A stronger emotion",e:"Incorrect. Emotion alone does not establish a factual conclusion."}
+],answer:0},
+
+{
+chapter:1,difficulty:"HARD",
+q:"Why is “poor patients do not care about their health” problematic?",
+choices:[
+{t:"It makes an unfair broad judgment",e:"Correct. The claim ignores alternative explanations such as access barriers and social conditions."},
+{t:"It is too precise",e:"Incorrect. The claim is actually overly broad."},
+{t:"It contains a measurement",e:"Incorrect. It contains no relevant measurement."},
+{t:"It is a question",e:"Incorrect. It is a claim."}
+],answer:0},
+
+{
+chapter:1,difficulty:"CORE",
+q:"Which branch studies reality and being?",
+choices:[
+{t:"Metaphysics",e:"Correct. Metaphysics studies reality and being."},
+{t:"Logic",e:"Incorrect. Logic focuses on correct reasoning."},
+{t:"Statistics",e:"Incorrect. Statistics is not the branch named in the material."},
+{t:"Rhetoric",e:"Incorrect. Rhetoric is not the branch defined here."}
+],answer:0},
+
+{
+chapter:1,difficulty:"HARD",
+q:"Which is a metaphysical question?",
+choices:[
+{t:"What does it mean to exist?",e:"Correct. Questions about existence and reality are metaphysical questions."},
+{t:"How many people liked this post?",e:"Incorrect. Popularity is not a metaphysical question."},
+{t:"Which source was posted first?",e:"Incorrect. That concerns chronology, not metaphysics."},
+{t:"What is the most popular opinion?",e:"Incorrect. Popularity is not the study of being."}
+],answer:0},
+
+{
+chapter:1,difficulty:"HARD",
+q:"What does logic NOT magically accomplish?",
+choices:[
+{t:"Make false premises true",e:"Correct. Logic evaluates reasoning structure; it does not turn false premises into true facts."},
+{t:"Help evaluate arguments",e:"Incorrect. Logic does help evaluate arguments."},
+{t:"Clarify reasoning",e:"Incorrect. Clarifying reasoning is a role of logic."},
+{t:"Identify reasoning errors",e:"Incorrect. Logic can help identify errors."}
+],answer:0},
+
+{
+chapter:1,difficulty:"CORE",
+q:"Why is careful questioning important in philosophy?",
+choices:[
+{t:"It leads toward reasoned judgment",e:"Correct. Philosophy involves questioning, reflection, argument, and judgment."},
+{t:"It guarantees personal agreement",e:"Incorrect. Philosophy does not require everyone to agree."},
+{t:"It eliminates all uncertainty",e:"Incorrect. Philosophical inquiry can reveal further questions."},
+{t:"It replaces evidence",e:"Incorrect. Reasoning does not replace evidence."}
+],answer:0},
+
+{
+chapter:1,difficulty:"HARD",
+q:"A student accepts a medical claim simply because an authority says it. What should critical thinking ask?",
+choices:[
+{t:"What supports the claim?",e:"Correct. Authority can matter, but the claim still requires appropriate evidence and examination."},
+{t:"Why is authority always enough?",e:"Incorrect. Authority alone is not automatically sufficient evidence."},
+{t:"How popular is the authority?",e:"Incorrect. Popularity does not establish the truth of the claim."},
+{t:"Can the claim avoid examination?",e:"Incorrect. Critical thinking requires examination."}
+],answer:0},
+
+{
+chapter:1,difficulty:"HARD",
+q:"Which action best demonstrates reasoned judgment?",
+choices:[
+{t:"Compare evidence before concluding",e:"Correct. Reasoned judgment considers information and evidence before reaching a conclusion."},
+{t:"Accept the first explanation",e:"Incorrect. That risks premature judgment."},
+{t:"Follow the majority automatically",e:"Incorrect. Majority agreement does not prove truth."},
+{t:"Ignore alternative explanations",e:"Incorrect. Considering alternatives strengthens careful reasoning."}
+],answer:0},
+
+{
+chapter:1,difficulty:"CORE",
+q:"What does poor reasoning potentially affect in health work?",
+choices:[
+{t:"Patient care and dignity",e:"Correct. Careless reasoning can affect treatment, communication, judgments, and respect for human dignity."},
+{t:"Only academic grades",e:"Incorrect. Its consequences can extend to real people."},
+{t:"Only vocabulary",e:"Incorrect. Poor reasoning can influence professional decisions."},
+{t:"Nothing important",e:"Incorrect. The chapter emphasizes real consequences."}
+],answer:0},
+
+/* =========================
+   CHAPTER 2
+========================= */
+
+{
+chapter:2,difficulty:"CORE",
+q:"What does logic provide for health-related judgment?",
+choices:[
+{t:"A careful path from information to conclusion",e:"Correct. Logic helps connect information to responsible conclusions."},
+{t:"A replacement for clinical training",e:"Incorrect. Logic does not replace training or supervision."},
+{t:"Automatic diagnoses",e:"Incorrect. Diagnosis cannot be produced merely by logical form."},
+{t:"A substitute for evidence",e:"Incorrect. Evidence remains necessary."}
+],answer:0},
+
+{
+chapter:2,difficulty:"HARD",
+q:"A patient says, “I feel weak.” What is the best response?",
+choices:[
+{t:"Clarify the complaint",e:"Correct. The student should ask when it began, whether it was sudden or gradual, symptoms, vitals, food, medications, and relevant context."},
+{t:"Assume tiredness",e:"Incorrect. That is a premature assumption."},
+{t:"Ignore it",e:"Incorrect. The statement contains potentially relevant information."},
+{t:"Immediately diagnose",e:"Incorrect. The material emphasizes working within proper role and supervision."}
+],answer:0},
+
+{
+chapter:2,difficulty:"CORE",
+q:"What is observation?",
+choices:[
+{t:"What is noticed or measured",e:"Correct. Observation concerns what is seen, heard, measured, or reported."},
+{t:"A conclusion",e:"Incorrect. A conclusion is judgment."},
+{t:"A hidden assumption",e:"Incorrect. Assumptions are accepted without enough examination."},
+{t:"A theory of reality",e:"Incorrect. That is not the meaning of observation here."}
+],answer:0},
+
+{
+chapter:2,difficulty:"CORE",
+q:"What is interpretation?",
+choices:[
+{t:"Meaning assigned to information",e:"Correct. Interpretation involves assigning meaning to what was observed or reported."},
+{t:"Raw measurement only",e:"Incorrect. Raw measurement is observation/data."},
+{t:"Final decision only",e:"Incorrect. Final decision belongs to judgment."},
+{t:"A question without an answer",e:"Incorrect. That is not the definition of interpretation."}
+],answer:0},
+
+{
+chapter:2,difficulty:"CORE",
+q:"What is judgment in the observation-interpretation model?",
+choices:[
+{t:"A conclusion or decision",e:"Correct. Judgment is the conclusion or decision reached after considering information."},
+{t:"The first thing noticed",e:"Incorrect. That is observation."},
+{t:"A vocabulary word",e:"Incorrect. Judgment is a mental act."},
+{t:"A random assumption",e:"Incorrect. Judgment should be based on considered information."}
+],answer:0},
+
+{
+chapter:2,difficulty:"HARD",
+q:"Which is an example of an assumption?",
+choices:[
+{t:"No questions means understanding",e:"Correct. Silence or absence of questions does not necessarily prove understanding."},
+{t:"Temperature measured at 38.3°C",e:"Incorrect. This is an observation with a measurement."},
+{t:"Patient reports dizziness",e:"Incorrect. This is reported information."},
+{t:"Instruction was unclear",e:"Incorrect. That is a possible judgment requiring context, not the assumption example given."}
+],answer:0},
+
+{
+chapter:2,difficulty:"HARD",
+q:"Why is “confident speaker = true” weak reasoning?",
+choices:[
+{t:"Confidence does not prove truth",e:"Correct. A confident presentation can still contain inaccurate or unsupported claims."},
+{t:"Confidence is always false",e:"Incorrect. Confidence itself is not necessarily false."},
+{t:"Evidence is unnecessary",e:"Incorrect. Evidence remains important."},
+{t:"Communication has no value",e:"Incorrect. Communication matters, but confidence alone is insufficient."}
+],answer:0},
+
+{
+chapter:2,difficulty:"CORE",
+q:"Which intellectual standard asks whether information is correct?",
+choices:[
+{t:"Accuracy",e:"Correct. Accuracy asks whether the information is correct and faithful to facts."},
+{t:"Clarity",e:"Incorrect. Clarity asks whether the statement is understandable."},
+{t:"Precision",e:"Incorrect. Precision concerns sufficient detail."},
+{t:"Fairness",e:"Incorrect. Fairness concerns bias and unjust assumptions."}
+],answer:0},
+
+{
+chapter:2,difficulty:"CORE",
+q:"Which intellectual standard asks whether an idea is understandable?",
+choices:[
+{t:"Clarity",e:"Correct. Clarity means the idea is understandable and specific."},
+{t:"Accuracy",e:"Incorrect. Accuracy concerns correctness."},
+{t:"Sufficiency",e:"Incorrect. Sufficiency concerns whether enough evidence exists."},
+{t:"Fairness",e:"Incorrect. Fairness concerns bias."}
+],answer:0},
+
+{
+chapter:2,difficulty:"CORE",
+q:"Which standard concerns enough detail?",
+choices:[
+{t:"Precision",e:"Correct. Precision requires enough specific detail."},
+{t:"Clarity",e:"Incorrect. Clarity is about understandability."},
+{t:"Consistency",e:"Incorrect. Consistency concerns contradictions."},
+{t:"Fairness",e:"Incorrect. Fairness concerns bias."}
+],answer:0},
+
+{
+chapter:2,difficulty:"HARD",
+q:"A statement says, “The patient is not okay.” What standard does it mainly lack?",
+choices:[
+{t:"Clarity",e:"Correct. The statement is vague and does not specify the patient's condition."},
+{t:"Distribution",e:"Incorrect. Distribution concerns categorical propositions."},
+{t:"Subalternation",e:"Incorrect. Subalternation belongs to the Square of Opposition."},
+{t:"Modus Ponens",e:"Incorrect. Modus Ponens is a conditional reasoning form."}
+],answer:0},
+
+{
+chapter:2,difficulty:"CORE",
+q:"Which standard asks whether information is connected to the issue?",
+choices:[
+{t:"Relevance",e:"Correct. Relevance asks whether information is connected to the problem being considered."},
+{t:"Accuracy",e:"Incorrect. Accuracy asks whether it is correct."},
+{t:"Precision",e:"Incorrect. Precision concerns detail."},
+{t:"Humility",e:"Incorrect. Humility is an intellectual attitude."}
+],answer:0},
+
+{
+chapter:2,difficulty:"HARD",
+q:"Which is an example of irrelevant information?",
+choices:[
+{t:"A stereotype about a patient's community",e:"Correct. A stereotype does not logically address the patient's actual situation and can be unfair."},
+{t:"Medication access",e:"Incorrect. Access can be relevant to adherence."},
+{t:"Patient understanding",e:"Incorrect. Understanding can affect compliance."},
+{t:"Language barrier",e:"Incorrect. Language can directly affect communication."}
+],answer:0},
+
+{
+chapter:2,difficulty:"CORE",
+q:"What does consistency require?",
+choices:[
+{t:"No contradiction among claims",e:"Correct. Consistency means statements should not contradict each other."},
+{t:"More emotional language",e:"Incorrect. Emotion does not establish consistency."},
+{t:"Universal conclusions",e:"Incorrect. Consistency is not about universality."},
+{t:"Fewer questions",e:"Incorrect. Questions can improve reasoning."}
+],answer:0},
+
+{
+chapter:2,difficulty:"HARD",
+q:"Why is one social media post insufficient for a broad medical conclusion?",
+choices:[
+{t:"It lacks sufficient evidence",e:"Correct. One post generally does not provide enough evidence for a broad health claim."},
+{t:"It is always inaccurate",e:"Incorrect. A post could contain accurate information; the issue is sufficiency and reliability."},
+{t:"Social media can never contain facts",e:"Incorrect. The material emphasizes examination rather than automatic rejection."},
+{t:"Popularity makes it sufficient",e:"Incorrect. Popularity does not make evidence sufficient."}
+],answer:0},
+
+{
+chapter:2,difficulty:"CORE",
+q:"What is intellectual humility?",
+choices:[
+{t:"Recognizing one's limits",e:"Correct. Intellectual humility means acknowledging that one may need more information or may be mistaken."},
+{t:"Refusing correction",e:"Incorrect. Refusing correction is opposite to humility."},
+{t:"Believing everything",e:"Incorrect. Humility does not mean accepting every claim."},
+{t:"Avoiding difficult topics",e:"Incorrect. Courage concerns examining difficult topics."}
+],answer:0},
+
+{
+chapter:2,difficulty:"CORE",
+q:"What is intellectual courage?",
+choices:[
+{t:"Willingness to examine difficult issues",e:"Correct. Courage includes questioning and correcting false beliefs."},
+{t:"Never changing an opinion",e:"Incorrect. Courage can involve revising a belief."},
+{t:"Agreeing automatically",e:"Incorrect. Courage involves examination."},
+{t:"Avoiding criticism",e:"Incorrect. Avoiding criticism is not the definition."}
+],answer:0},
+
+{
+chapter:2,difficulty:"CORE",
+q:"What is intellectual honesty?",
+choices:[
+{t:"Admitting weak evidence",e:"Correct. Intellectual honesty means not twisting information and being willing to revise a conclusion."},
+{t:"Defending every belief",e:"Incorrect. Honesty requires acknowledging weaknesses."},
+{t:"Following popularity",e:"Incorrect. Popularity is not intellectual honesty."},
+{t:"Avoiding evidence",e:"Incorrect. Honesty requires dealing fairly with evidence."}
+],answer:0},
+
+{
+chapter:2,difficulty:"CORE",
+q:"What is intellectual empathy?",
+choices:[
+{t:"Understanding another viewpoint",e:"Correct. Intellectual empathy means understanding another person's perspective without automatically accepting every claim."},
+{t:"Agreeing with everyone",e:"Incorrect. Understanding does not require agreement."},
+{t:"Rejecting other views",e:"Incorrect. That contradicts empathy."},
+{t:"Ignoring context",e:"Incorrect. Understanding perspective requires attention to context."}
+],answer:0},
+
+{
+chapter:2,difficulty:"HARD",
+q:"What does responsible skepticism avoid?",
+choices:[
+{t:"Quick acceptance and quick rejection",e:"Correct. Responsible skepticism examines claims carefully and fairly."},
+{t:"Evidence",e:"Incorrect. Evidence is essential to responsible skepticism."},
+{t:"Questions",e:"Incorrect. Questions are part of skepticism."},
+{t:"Alternative explanations",e:"Incorrect. Considering alternatives improves careful reasoning."}
+],answer:0},
+
+/* =========================
+   CHAPTER 3
+========================= */
+
+{
+chapter:3,difficulty:"CORE",
+q:"What are the three basic operations of the human mind presented?",
+choices:[
+{t:"Apprehension, judgment, reasoning",e:"Correct. These are the three basic operations discussed in the chapter."},
+{t:"Observation, emotion, memory",e:"Incorrect. Those are not the three operations listed."},
+{t:"Questioning, naming, guessing",e:"Incorrect. That is not the chapter's three-part structure."},
+{t:"Argument, debate, agreement",e:"Incorrect. Those are not the basic operations."}
+],answer:0},
+
+{
+chapter:3,difficulty:"CORE",
+q:"What does simple apprehension do?",
+choices:[
+{t:"Grasps an idea without judging it",e:"Correct. Simple apprehension grasps meaning without affirming or denying."},
+{t:"Affirms an idea as true",e:"Incorrect. Affirmation belongs to judgment."},
+{t:"Draws a conclusion",e:"Incorrect. Drawing conclusions belongs to reasoning."},
+{t:"Rejects evidence",e:"Incorrect. Simple apprehension does not involve rejection."}
+],answer:0},
+
+{
+chapter:3,difficulty:"CORE",
+q:"Is “patient” by itself true or false?",
+choices:[
+{t:"Neither",e:"Correct. “Patient” is a concept or term, not a complete proposition capable of truth or falsity."},
+{t:"Always true",e:"Incorrect. A term alone is not true or false."},
+{t:"Always false",e:"Incorrect. A term alone is not evaluated this way."},
+{t:"Both true and false",e:"Incorrect. The issue is that it is not a proposition."}
+],answer:0},
+
+{
+chapter:3,difficulty:"CORE",
+q:"What is a concept?",
+choices:[
+{t:"A mental representation",e:"Correct. A concept is a mental representation of an object, quality, action, or idea."},
+{t:"A complete proposition",e:"Incorrect. A concept is not necessarily a complete judgment."},
+{t:"A command",e:"Incorrect. A command is a sentence type."},
+{t:"A measurement",e:"Incorrect. Measurement is not the definition of concept."}
+],answer:0},
+
+{
+chapter:3,difficulty:"CORE",
+q:"What is a term?",
+choices:[
+{t:"A verbal expression of a concept",e:"Correct. A term is the verbal or written expression of a concept."},
+{t:"A mental image only",e:"Incorrect. The mental idea is the concept."},
+{t:"A complete argument",e:"Incorrect. A term alone is not an argument."},
+{t:"A truth value",e:"Incorrect. A term alone is not true or false."}
+],answer:0},
+
+{
+chapter:3,difficulty:"HARD",
+q:"What does it mean that concept and term are different?",
+choices:[
+{t:"Different words may express a similar concept",e:"Correct. The chapter uses language differences such as “nurse” and “nars” to illustrate the distinction."},
+{t:"Words can never express ideas",e:"Incorrect. Terms express concepts."},
+{t:"Concepts are always written",e:"Incorrect. Concepts exist mentally."},
+{t:"Terms are always propositions",e:"Incorrect. A term alone is not a proposition."}
+],answer:0},
+
+{
+chapter:3,difficulty:"CORE",
+q:"What is ideogenesis?",
+choices:[
+{t:"Formation of ideas",e:"Correct. Ideogenesis is the formation of ideas in the mind through experience, attention, comparison, abstraction, reflection, and naming."},
+{t:"Proof of an argument",e:"Incorrect. That belongs to reasoning and evaluation."},
+{t:"Memorization of terms",e:"Incorrect. Ideogenesis is broader than memorization."},
+{t:"Elimination of concepts",e:"Incorrect. Ideogenesis concerns forming ideas."}
+],answer:0},
+
+{
+chapter:3,difficulty:"CORE",
+q:"Which comes first in the example process of idea formation?",
+choices:[
+{t:"Experience",e:"Correct. Experience is the encounter from which attention, comparison, abstraction, and naming can develop."},
+{t:"Naming",e:"Incorrect. Naming comes later in the listed process."},
+{t:"Conclusion",e:"Incorrect. Conclusion is not the first step."},
+{t:"Distribution",e:"Incorrect. Distribution concerns propositions."}
+],answer:0},
+
+{
+chapter:3,difficulty:"CORE",
+q:"What does attention contribute to ideogenesis?",
+choices:[
+{t:"It focuses the mind",e:"Correct. Attention directs the mind toward relevant features of experience."},
+{t:"It makes every claim true",e:"Incorrect. Attention does not establish truth."},
+{t:"It eliminates comparison",e:"Incorrect. Comparison remains part of idea formation."},
+{t:"It replaces experience",e:"Incorrect. Attention works with experience."}
+],answer:0},
+
+{
+chapter:3,difficulty:"CORE",
+q:"What does comparison do during idea formation?",
+choices:[
+{t:"Finds similarities and differences",e:"Correct. Comparison helps the mind notice what things share and how they differ."},
+{t:"Creates truth automatically",e:"Incorrect. Comparison helps form ideas but does not automatically establish truth."},
+{t:"Makes all objects identical",e:"Incorrect. Comparison includes differences as well as similarities."},
+{t:"Removes abstraction",e:"Incorrect. Abstraction follows as part of the process."}
+],answer:0},
+
+{
+chapter:3,difficulty:"CORE",
+q:"What does abstraction do?",
+choices:[
+{t:"Separates important features from examples",e:"Correct. Abstraction identifies common or essential features across experiences."},
+{t:"Rejects every example",e:"Incorrect. Abstraction uses examples to form a more general concept."},
+{t:"Creates a command",e:"Incorrect. Abstraction is part of concept formation."},
+{t:"Produces a conclusion directly",e:"Incorrect. A concept is not yet a conclusion."}
+],answer:0},
+
+{
+chapter:3,difficulty:"HARD",
+q:"Why is “The patient is difficult” unclear?",
+choices:[
+{t:"The word “difficult” is vague",e:"Correct. The word may mean fearful, angry, confused, questioning, refusing, or needing support."},
+{t:"Every patient is difficult",e:"Incorrect. That is itself an unsupported generalization."},
+{t:"Patients cannot be described",e:"Incorrect. They can be described using clearer observations."},
+{t:"Judgments cannot be communicated",e:"Incorrect. Clear judgments can be communicated."}
+],answer:0},
+
+{
+chapter:3,difficulty:"CORE",
+q:"Which is a clearer version of “The patient is difficult”?",
+choices:[
+{t:"The patient asked several questions and appeared worried",e:"Correct. This uses specific observations rather than a vague label."},
+{t:"The patient is bad",e:"Incorrect. This is another vague judgment."},
+{t:"The patient is always difficult",e:"Incorrect. This broadens the unsupported judgment."},
+{t:"Everyone knows the patient is difficult",e:"Incorrect. Popularity does not make the claim clear or true."}
+],answer:0},
+
+{
+chapter:3,difficulty:"CORE",
+q:"What does comprehension refer to?",
+choices:[
+{t:"Qualities included in a concept",e:"Correct. Comprehension concerns the meaning or qualities contained in a concept."},
+{t:"People to whom it applies",e:"Incorrect. That describes extension."},
+{t:"The number of words used",e:"Incorrect. Comprehension concerns meaning."},
+{t:"Truth of the proposition",e:"Incorrect. Truth is not the definition of comprehension."}
+],answer:0},
+
+{
+chapter:3,difficulty:"CORE",
+q:"What does extension refer to?",
+choices:[
+{t:"Objects or persons the concept applies to",e:"Correct. Extension concerns the range of objects or persons covered by a concept."},
+{t:"Qualities in the concept",e:"Incorrect. Those belong to comprehension."},
+{t:"The sound of a word",e:"Incorrect. Sound is not extension."},
+{t:"The strength of an argument",e:"Incorrect. Argument strength is separate."}
+],answer:0},
+
+{
+chapter:3,difficulty:"HARD",
+q:"Which generally happens when comprehension increases?",
+choices:[
+{t:"Extension becomes narrower",e:"Correct. Greater specificity usually produces a narrower extension."},
+{t:"Extension becomes unlimited",e:"Incorrect. More specific concepts apply to fewer cases."},
+{t:"Meaning disappears",e:"Incorrect. Meaning becomes more specific."},
+{t:"The term becomes automatically true",e:"Incorrect. Specificity does not establish truth."}
+],answer:0},
+
+{
+chapter:3,difficulty:"HARD",
+q:"Why can logic not tell a patient's temperature without measurement?",
+choices:[
+{t:"Logic cannot replace observation",e:"Correct. The chapter explicitly says reasoning alone cannot provide a temperature reading."},
+{t:"Logic has no rules",e:"Incorrect. Logic studies principles and structures of reasoning."},
+{t:"Temperature has no meaning",e:"Incorrect. Temperature can be meaningfully measured."},
+{t:"Terms cannot express data",e:"Incorrect. Terms can express measured information."}
+],answer:0},
+
+{
+chapter:3,difficulty:"HARD",
+q:"What is the correct relation among apprehension, judgment, and reasoning?",
+choices:[
+{t:"Idea → affirmation/denial → conclusion",e:"Correct. Apprehension grasps an idea, judgment affirms or denies, and reasoning moves toward a conclusion."},
+{t:"Conclusion → idea → command",e:"Incorrect. That reverses the basic structure."},
+{t:"Question → emotion → term",e:"Incorrect. That does not describe the three operations."},
+{t:"Measurement → distribution → popularity",e:"Incorrect. Those are unrelated to the three operations."}
+],answer:0},
+
+{
+chapter:3,difficulty:"CORE",
+q:"Which final step gives a concept a verbal expression?",
+choices:[
+{t:"Naming",e:"Correct. Naming expresses the formed concept through a term."},
+{t:"Abstraction",e:"Incorrect. Abstraction identifies important features."},
+{t:"Comparison",e:"Incorrect. Comparison identifies similarities and differences."},
+{t:"Observation",e:"Incorrect. Observation provides experience or data."}
+],answer:0},
+
+/* =========================
+   CHAPTER 4
+========================= */
+
+{
+chapter:4,difficulty:"CORE",
+q:"What is judgment?",
+choices:[
+{t:"An act that affirms or denies",e:"Correct. Judgment affirms or denies something."},
+{t:"A single word",e:"Incorrect. A single term expresses a concept."},
+{t:"A question",e:"Incorrect. Questions do not affirm or deny."},
+{t:"An exclamation",e:"Incorrect. An exclamation does not necessarily make a truth-evaluable claim."}
+],answer:0},
+
+{
+chapter:4,difficulty:"CORE",
+q:"What is a proposition?",
+choices:[
+{t:"Expression of a judgment",e:"Correct. A proposition verbally or textually expresses a judgment and can be true or false."},
+{t:"A concept alone",e:"Incorrect. A concept alone is not a complete judgment."},
+{t:"A command",e:"Incorrect. Commands are non-propositions."},
+{t:"A question",e:"Incorrect. Questions are non-propositions."}
+],answer:0},
+
+{
+chapter:4,difficulty:"CORE",
+q:"Which statement is a proposition?",
+choices:[
+{t:"The patient is resting.",e:"Correct. It affirms something and can be evaluated as true or false."},
+{t:"Is the patient resting?",e:"Incorrect. This is a question."},
+{t:"Please check the patient.",e:"Incorrect. This is a command."},
+{t:"How painful!",e:"Incorrect. This is an exclamation."}
+],answer:0},
+
+{
+chapter:4,difficulty:"CORE",
+q:"Which is NOT a proposition?",
+choices:[
+{t:"Please check the instructions.",e:"Correct. This is a command and does not affirm or deny."},
+{t:"The medicine is prescribed.",e:"Incorrect. This is a proposition."},
+{t:"Some patients are anxious.",e:"Incorrect. This is a proposition."},
+{t:"No unsupported claims are reliable.",e:"Incorrect. This is a proposition."}
+],answer:0},
+
+{
+chapter:4,difficulty:"CORE",
+q:"What does a term express?",
+choices:[
+{t:"A concept",e:"Correct. A term is the verbal or written expression of a concept."},
+{t:"A complete judgment",e:"Incorrect. A complete judgment is expressed by a proposition."},
+{t:"A conclusion only",e:"Incorrect. A term alone is not a conclusion."},
+{t:"A truth value",e:"Incorrect. A term alone is not true or false."}
+],answer:0},
+
+{
+chapter:4,difficulty:"CORE",
+q:"What are the three parts of a standard categorical proposition?",
+choices:[
+{t:"Subject, predicate, copula",e:"Correct. These are the three structural parts given in the material."},
+{t:"Premise, conclusion, inference",e:"Incorrect. Those describe arguments and reasoning."},
+{t:"Concept, term, emotion",e:"Incorrect. These are not the three parts of the categorical proposition."},
+{t:"Question, command, exclamation",e:"Incorrect. Those are sentence types, not proposition anatomy."}
+],answer:0},
+
+{
+chapter:4,difficulty:"CORE",
+q:"What is the subject in “The patient is anxious”?",
+choices:[
+{t:"patient",e:"Correct. The patient is what the statement is about."},
+{t:"anxious",e:"Incorrect. Anxious is the predicate."},
+{t:"is",e:"Incorrect. Is is the copula."},
+{t:"the",e:"Incorrect. The is an article."}
+],answer:0},
+
+{
+chapter:4,difficulty:"CORE",
+q:"What is the predicate in “The patient is anxious”?",
+choices:[
+{t:"anxious",e:"Correct. Anxious is what is affirmed about the patient."},
+{t:"patient",e:"Incorrect. Patient is the subject."},
+{t:"is",e:"Incorrect. Is is the copula."},
+{t:"the",e:"Incorrect. The is an article."}
+],answer:0},
+
+{
+chapter:4,difficulty:"CORE",
+q:"What is the copula in “The patient is anxious”?",
+choices:[
+{t:"is",e:"Correct. Is links subject and predicate."},
+{t:"patient",e:"Incorrect. Patient is the subject."},
+{t:"anxious",e:"Incorrect. Anxious is the predicate."},
+{t:"the",e:"Incorrect. The is an article."}
+],answer:0},
+
+{
+chapter:4,difficulty:"CORE",
+q:"What is the form of an A proposition?",
+choices:[
+{t:"All S are P",e:"Correct. A is Universal Affirmative."},
+{t:"No S are P",e:"Incorrect. That is E."},
+{t:"Some S are P",e:"Incorrect. That is I."},
+{t:"Some S are not P",e:"Incorrect. That is O."}
+],answer:0},
+
+{
+chapter:4,difficulty:"CORE",
+q:"What is the form of an E proposition?",
+choices:[
+{t:"No S are P",e:"Correct. E is Universal Negative."},
+{t:"All S are P",e:"Incorrect. That is A."},
+{t:"Some S are P",e:"Incorrect. That is I."},
+{t:"Some S are not P",e:"Incorrect. That is O."}
+],answer:0},
+
+{
+chapter:4,difficulty:"CORE",
+q:"What is the form of an I proposition?",
+choices:[
+{t:"Some S are P",e:"Correct. I is Particular Affirmative."},
+{t:"All S are P",e:"Incorrect. That is A."},
+{t:"No S are P",e:"Incorrect. That is E."},
+{t:"Some S are not P",e:"Incorrect. That is O."}
+],answer:0},
+
+{
+chapter:4,difficulty:"CORE",
+q:"What is the form of an O proposition?",
+choices:[
+{t:"Some S are not P",e:"Correct. O is Particular Negative."},
+{t:"All S are P",e:"Incorrect. That is A."},
+{t:"No S are P",e:"Incorrect. That is E."},
+{t:"Some S are P",e:"Incorrect. That is I."}
+],answer:0},
+
+{
+chapter:4,difficulty:"HARD",
+q:"“All nurses are health professionals” is:",
+choices:[
+{t:"Universal affirmative",e:"Correct. It has the A form: All S are P."},
+{t:"Universal negative",e:"Incorrect. Universal negative is E."},
+{t:"Particular affirmative",e:"Incorrect. Particular affirmative is I."},
+{t:"Particular negative",e:"Incorrect. Particular negative is O."}
+],answer:0},
+
+{
+chapter:4,difficulty:"HARD",
+q:"“No unsupported claims are reliable” is:",
+choices:[
+{t:"Universal negative",e:"Correct. It has the E form: No S are P."},
+{t:"Universal affirmative",e:"Incorrect. A uses All S are P."},
+{t:"Particular affirmative",e:"Incorrect. I uses Some S are P."},
+{t:"Particular negative",e:"Incorrect. O uses Some S are not P."}
+],answer:0},
+
+{
+chapter:4,difficulty:"HARD",
+q:"“Some patients are anxious” is:",
+choices:[
+{t:"Particular affirmative",e:"Correct. It has the I form: Some S are P."},
+{t:"Universal affirmative",e:"Incorrect. A uses All S are P."},
+{t:"Universal negative",e:"Incorrect. E uses No S are P."},
+{t:"Particular negative",e:"Incorrect. O uses Some S are not P."}
+],answer:0},
+
+{
+chapter:4,difficulty:"HARD",
+q:"“Some instructions are not clear” is:",
+choices:[
+{t:"Particular negative",e:"Correct. It has the O form: Some S are not P."},
+{t:"Universal affirmative",e:"Incorrect. A uses All S are P."},
+{t:"Universal negative",e:"Incorrect. E uses No S are P."},
+{t:"Particular affirmative",e:"Incorrect. I uses Some S are P."}
+],answer:0},
+
+{
+chapter:4,difficulty:"HARD",
+q:"Which pair is contradictory?",
+choices:[
+{t:"A and O",e:"Correct. A and O have exactly opposite truth values."},
+{t:"A and E",e:"Incorrect. A and E are contraries."},
+{t:"I and O",e:"Incorrect. I and O are subcontraries."},
+{t:"A and I",e:"Incorrect. A and I are related by subalternation."}
+],answer:0},
+
+{
+chapter:4,difficulty:"HARD",
+q:"Which pair is also contradictory?",
+choices:[
+{t:"E and I",e:"Correct. E and I are contradictory propositions."},
+{t:"A and E",e:"Incorrect. They are contraries."},
+{t:"I and O",e:"Incorrect. They are subcontraries."},
+{t:"A and I",e:"Incorrect. They have a subalternation relation."}
+],answer:0},
+
+{
+chapter:4,difficulty:"HARD",
+q:"What is true of contraries A and E?",
+choices:[
+{t:"They cannot both be true",e:"Correct. Contraries cannot both be true, although both can be false."},
+{t:"They cannot both be false",e:"Incorrect. They can both be false."},
+{t:"They must always share truth value",e:"Incorrect. They cannot both be true."},
+{t:"They are contradictory",e:"Incorrect. A and E are contraries."}
+],answer:0},
+
+{
+chapter:4,difficulty:"HARD",
+q:"What is true of subcontraries I and O?",
+choices:[
+{t:"They cannot both be false",e:"Correct. I and O can both be true but cannot both be false."},
+{t:"They cannot both be true",e:"Incorrect. They can both be true."},
+{t:"They are contradictory",e:"Incorrect. They are subcontraries."},
+{t:"They must always be universal",e:"Incorrect. Both are particular propositions."}
+],answer:0},
+
+{
+chapter:4,difficulty:"HARD",
+q:"What is the direction of subalternation given in the material?",
+choices:[
+{t:"A→I and E→O",e:"Correct. Truth flows downward in these relationships, while falsity flows upward."},
+{t:"I→A and O→E only",e:"Incorrect. The provided direction is A to I and E to O."},
+{t:"A→E and I→O",e:"Incorrect. Those are not the subalternation pairs."},
+{t:"O→A and I→E",e:"Incorrect. Those are not the listed relations."}
+],answer:0},
+
+{
+chapter:4,difficulty:"CORE",
+q:"What does distribution refer to?",
+choices:[
+{t:"Whether a term refers to all members of its class",e:"Correct. Distribution asks whether the proposition refers to all members of the subject or predicate class."},
+{t:"How many words appear",e:"Incorrect. Distribution concerns terms, not word count."},
+{t:"Whether a question is clear",e:"Incorrect. Distribution concerns categorical propositions."},
+{t:"Whether a premise is popular",e:"Incorrect. Popularity is unrelated."}
+],answer:0},
+
+{
+chapter:4,difficulty:"HARD",
+q:"Which term is distributed in an A proposition?",
+choices:[
+{t:"Subject only",e:"Correct. A propositions distribute the subject only."},
+{t:"Predicate only",e:"Incorrect. Predicate-only distribution belongs to O."},
+{t:"Both",e:"Incorrect. Both are distributed in E."},
+{t:"Neither",e:"Incorrect. Neither are distributed in I."}
+],answer:0},
+
+{
+chapter:4,difficulty:"HARD",
+q:"Which terms are distributed in an E proposition?",
+choices:[
+{t:"Both subject and predicate",e:"Correct. E distributes both terms."},
+{t:"Subject only",e:"Incorrect. That belongs to A."},
+{t:"Predicate only",e:"Incorrect. That belongs to O."},
+{t:"Neither",e:"Incorrect. That belongs to I."}
+],answer:0},
+
+{
+chapter:4,difficulty:"HARD",
+q:"Which terms are distributed in an I proposition?",
+choices:[
+{t:"Neither",e:"Correct. I propositions distribute neither term."},
+{t:"Subject only",e:"Incorrect. A distributes the subject."},
+{t:"Predicate only",e:"Incorrect. O distributes the predicate."},
+{t:"Both",e:"Incorrect. E distributes both."}
+],answer:0},
+
+{
+chapter:4,difficulty:"HARD",
+q:"Which term is distributed in an O proposition?",
+choices:[
+{t:"Predicate only",e:"Correct. O propositions distribute the predicate."},
+{t:"Subject only",e:"Incorrect. A distributes the subject only."},
+{t:"Both",e:"Incorrect. E distributes both."},
+{t:"Neither",e:"Incorrect. I distributes neither."}
+],answer:0},
+
+/* =========================
+   CHAPTER 5
+========================= */
+
+{
+chapter:5,difficulty:"CORE",
+q:"What is reasoning?",
+choices:[
+{t:"Moving from known statements to a conclusion",e:"Correct. Reasoning moves from known statements toward a new statement or conclusion."},
+{t:"Naming a concept",e:"Incorrect. Naming gives a concept a term."},
+{t:"Asking a question",e:"Incorrect. A question is not itself reasoning."},
+{t:"Making an emotional response",e:"Incorrect. Emotion is not the definition of reasoning."}
+],answer:0},
+
+{
+chapter:5,difficulty:"CORE",
+q:"What is inference?",
+choices:[
+{t:"Deriving a conclusion from premises",e:"Correct. Inference is the process of deriving a conclusion from one or more premises."},
+{t:"Defining a term",e:"Incorrect. Defining concerns concepts and terms."},
+{t:"Making a command",e:"Incorrect. A command is not an inference."},
+{t:"Expressing surprise",e:"Incorrect. An exclamation is not an inference."}
+],answer:0},
+
+{
+chapter:5,difficulty:"CORE",
+q:"What is an argument?",
+choices:[
+{t:"Statements supporting a conclusion",e:"Correct. An argument has premises that support another statement, the conclusion."},
+{t:"A single term",e:"Incorrect. A term alone does not form an argument."},
+{t:"A question only",e:"Incorrect. An argument contains supporting statements and a conclusion."},
+{t:"A command",e:"Incorrect. A command is not an argument."}
+],answer:0},
+
+{
+chapter:5,difficulty:"CORE",
+q:"What is a premise?",
+choices:[
+{t:"Evidence supporting a conclusion",e:"Correct. A premise is offered as evidence or reason."},
+{t:"The final claim",e:"Incorrect. That is the conclusion."},
+{t:"A question",e:"Incorrect. Premises are statements."},
+{t:"The middle term only",e:"Incorrect. A premise may contain a middle term but is not defined by that alone."}
+],answer:0},
+
+{
+chapter:5,difficulty:"CORE",
+q:"What is a conclusion?",
+choices:[
+{t:"The statement supported by premises",e:"Correct. The conclusion is what follows from the supporting premises."},
+{t:"The evidence itself",e:"Incorrect. Evidence is provided by premises."},
+{t:"A concept alone",e:"Incorrect. A concept alone is not a conclusion."},
+{t:"A command",e:"Incorrect. A conclusion is a statement resulting from reasoning."}
+],answer:0},
+
+{
+chapter:5,difficulty:"CORE",
+q:"Which is a premise indicator?",
+choices:[
+{t:"Because",e:"Correct. “Because” commonly signals supporting evidence or a premise."},
+{t:"Therefore",e:"Incorrect. “Therefore” commonly signals a conclusion."},
+{t:"Thus",e:"Incorrect. “Thus” commonly signals a conclusion."},
+{t:"Hence",e:"Incorrect. “Hence” commonly signals a conclusion."}
+],answer:0},
+
+{
+chapter:5,difficulty:"CORE",
+q:"Which is a conclusion indicator?",
+choices:[
+{t:"Therefore",e:"Correct. “Therefore” signals the resulting conclusion."},
+{t:"Because",e:"Incorrect. “Because” commonly introduces a premise."},
+{t:"Since",e:"Incorrect. In the provided list, “since” is a premise indicator."},
+{t:"Given that",e:"Incorrect. “Given that” introduces a premise."}
+],answer:0},
+
+{
+chapter:5,difficulty:"HARD",
+q:"What does validity focus on?",
+choices:[
+{t:"Whether the conclusion follows structurally",e:"Correct. Validity concerns the logical connection between premises and conclusion."},
+{t:"Whether every premise is factually true",e:"Incorrect. That is part of soundness."},
+{t:"Whether an argument is popular",e:"Incorrect. Popularity is irrelevant to validity."},
+{t:"Whether the conclusion sounds nice",e:"Incorrect. Style does not establish validity."}
+],answer:0},
+
+{
+chapter:5,difficulty:"HARD",
+q:"What does soundness require?",
+choices:[
+{t:"Validity and true premises",e:"Correct. A sound argument must be valid and every premise must be true in reality."},
+{t:"Only true conclusions",e:"Incorrect. Soundness concerns the whole argument."},
+{t:"Popularity and validity",e:"Incorrect. Popularity is not required."},
+{t:"A conclusion without premises",e:"Incorrect. Soundness concerns arguments containing premises."}
+],answer:0},
+
+{
+chapter:5,difficulty:"HARD",
+q:"Can an argument be valid even when a premise is false?",
+choices:[
+{t:"Yes",e:"Correct. Validity concerns structure. An internally flawless argument can have false premises."},
+{t:"No",e:"Incorrect. False premises do not automatically make the structure invalid."},
+{t:"Only if popular",e:"Incorrect. Popularity is irrelevant."},
+{t:"Only if emotional",e:"Incorrect. Emotion does not determine validity."}
+],answer:0},
+
+{
+chapter:5,difficulty:"CORE",
+q:"What is the major term?",
+choices:[
+{t:"Predicate of the conclusion",e:"Correct. The major term is the predicate of the conclusion."},
+{t:"Subject of the conclusion",e:"Incorrect. That is the minor term."},
+{t:"Term in neither premise",e:"Incorrect. The major term appears in the premises as well."},
+{t:"Term only in the conclusion",e:"Incorrect. It also occurs in a premise."}
+],answer:0},
+
+{
+chapter:5,difficulty:"CORE",
+q:"What is the minor term?",
+choices:[
+{t:"Subject of the conclusion",e:"Correct. The minor term is the subject of the conclusion."},
+{t:"Predicate of the conclusion",e:"Incorrect. That is the major term."},
+{t:"Term absent from premises",e:"Incorrect. The minor term occurs in a premise."},
+{t:"Middle term",e:"Incorrect. The middle term has a different role."}
+],answer:0},
+
+{
+chapter:5,difficulty:"CORE",
+q:"What is the middle term?",
+choices:[
+{t:"The term in both premises but not the conclusion",e:"Correct. It connects the major and minor terms."},
+{t:"The predicate of the conclusion",e:"Incorrect. That is the major term."},
+{t:"The subject of the conclusion",e:"Incorrect. That is the minor term."},
+{t:"The conclusion itself",e:"Incorrect. The middle term is only a term."}
+],answer:0},
+
+{
+chapter:5,difficulty:"HARD",
+q:"Which rule concerns distribution of the middle term?",
+choices:[
+{t:"It must be distributed at least once",e:"Correct. Otherwise the syllogism commits the Fallacy of the Undistributed Middle."},
+{t:"It must appear in the conclusion",e:"Incorrect. The middle term never appears in the conclusion."},
+{t:"It must always be negative",e:"Incorrect. Negativity is not the rule."},
+{t:"It must appear only once",e:"Incorrect. It appears in both premises."}
+],answer:0},
+
+{
+chapter:5,difficulty:"HARD",
+q:"What happens when a distributed conclusion term was not distributed in its premise?",
+choices:[
+{t:"The syllogism is invalid",e:"Correct. This violates the rule requiring distributed conclusion terms to be distributed in the relevant premise."},
+{t:"It becomes automatically sound",e:"Incorrect. The structure would be invalid."},
+{t:"Nothing",e:"Incorrect. It violates a validity rule."},
+{t:"The premise becomes a question",e:"Incorrect. Sentence type does not change that way."}
+],answer:0},
+
+{
+chapter:5,difficulty:"HARD",
+q:"What does Rule 3 forbid?",
+choices:[
+{t:"Two negative premises",e:"Correct. Two negative premises cannot produce a valid categorical conclusion."},
+{t:"Two affirmative premises",e:"Incorrect. Two affirmative premises can be used in valid forms."},
+{t:"A universal premise",e:"Incorrect. Universal premises are allowed."},
+{t:"A middle term",e:"Incorrect. A middle term is required."}
+],answer:0},
+
+{
+chapter:5,difficulty:"HARD",
+q:"If one premise is negative, what must the conclusion be?",
+choices:[
+{t:"Negative",e:"Correct. The material states that if one premise is negative, the conclusion must be negative."},
+{t:"Affirmative",e:"Incorrect. That contradicts Rule 4."},
+{t:"A question",e:"Incorrect. A conclusion is a statement."},
+{t:"Universal only",e:"Incorrect. Negativity does not by itself require universality."}
+],answer:0},
+
+{
+chapter:5,difficulty:"HARD",
+q:"Which pattern is Modus Ponens?",
+choices:[
+{t:"If A then B; A; therefore B",e:"Correct. This is the provided Modus Ponens structure."},
+{t:"If A then B; B; therefore A",e:"Incorrect. This reverses the conditional."},
+{t:"If A then B; not A; therefore not B",e:"Incorrect. This is not the provided Modus Ponens structure."},
+{t:"A; B; therefore if A then B",e:"Incorrect. This is not the conditional structure given."}
+],answer:0},
+
+{
+chapter:5,difficulty:"HARD",
+q:"In Modus Ponens, what is affirmed?",
+choices:[
+{t:"The antecedent",e:"Correct. The minor premise affirms A, the antecedent, leading to B."},
+{t:"Only the conclusion",e:"Incorrect. The pattern begins by affirming the antecedent."},
+{t:"The opposite of the antecedent",e:"Incorrect. Modus Ponens affirms the antecedent."},
+{t:"The middle term",e:"Incorrect. Modus Ponens is conditional, not categorical-term analysis."}
+],answer:0},
+
+{
+chapter:5,difficulty:"HARD",
+q:"Consider: All health professionals are responsible communicators. All nurses are health professionals. Therefore, all nurses are responsible communicators. What is the minor term?",
+choices:[
+{t:"nurses",e:"Correct. Nurses is the subject of the conclusion, so it is the minor term."},
+{t:"responsible communicators",e:"Incorrect. That is the major term."},
+{t:"health professionals",e:"Incorrect. That is the middle term."},
+{t:"communicators",e:"Incorrect. The full predicate phrase is the major term."}
+],answer:0},
+
+{
+chapter:5,difficulty:"HARD",
+q:"In the same syllogism, what is the major term?",
+choices:[
+{t:"responsible communicators",e:"Correct. It is the predicate of the conclusion."},
+{t:"nurses",e:"Incorrect. Nurses is the minor term."},
+{t:"health professionals",e:"Incorrect. Health professionals is the middle term."},
+{t:"all nurses",e:"Incorrect. The major term is the predicate class."}
+],answer:0},
+
+{
+chapter:5,difficulty:"HARD",
+q:"In the same syllogism, what is the middle term?",
+choices:[
+{t:"health professionals",e:"Correct. It appears in both premises and not in the conclusion."},
+{t:"nurses",e:"Incorrect. Nurses is the minor term."},
+{t:"responsible communicators",e:"Incorrect. Responsible communicators is the major term."},
+{t:"all nurses",e:"Incorrect. The middle term is health professionals."}
+],answer:0},
+
+{
+chapter:5,difficulty:"EXPERT",
+q:"Why must a middle term never appear in the conclusion?",
+choices:[
+{t:"Its role is to connect the premises",e:"Correct. The middle term links the minor and major terms and therefore is not part of the conclusion's subject-predicate pair."},
+{t:"It must always be hidden",e:"Incorrect. It appears openly in the premises."},
+{t:"It has no meaning",e:"Incorrect. It has a specific logical role."},
+{t:"It is always false",e:"Incorrect. Truth or falsity is not its defining role."}
+],answer:0},
+
+{
+chapter:5,difficulty:"HARD",
+q:"What makes a sound argument different from merely valid reasoning?",
+choices:[
+{t:"Its premises are also true",e:"Correct. Soundness adds factual truth of all premises to validity."},
+{t:"Its conclusion is longer",e:"Incorrect. Length has no role in soundness."},
+{t:"It is more popular",e:"Incorrect. Popularity is irrelevant."},
+{t:"It has more terms",e:"Incorrect. More terms do not create soundness."}
+],answer:0},
+
+{
+chapter:5,difficulty:"EXPERT",
+q:"What is the main purpose of the middle term in a categorical syllogism?",
+choices:[
+{t:"Connect major and minor terms",e:"Correct. The middle term provides the logical connection between the two terms of the conclusion."},
+{t:"Become the conclusion",e:"Incorrect. It never appears in the conclusion."},
+{t:"Replace the premises",e:"Incorrect. It occurs within the premises."},
+{t:"Express an emotion",e:"Incorrect. It performs a structural logical role."}
+],answer:0}
+
+];
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let selectedCount=20;
+let selectedChapter="all";
+
+let quizQuestions=[];
+let currentQuestion=0;
+let score=0;
+let answered=false;
+let answerHistory=[];
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const menuScreen=document.getElementById("menuScreen");
+const quizScreen=document.getElementById("quizScreen");
+const resultScreen=document.getElementById("resultScreen");
+
+const startBtn=document.getElementById("startBtn");
+const nextBtn=document.getElementById("nextBtn");
+
+const questionText=document.getElementById("questionText");
+const choicesContainer=document.getElementById("choicesContainer");
+
+const explanationPanel=document.getElementById("explanationPanel");
+const explanationsContainer=document.getElementById("explanationsContainer");
+
+const quizModule=document.getElementById("quizModule");
+const quizCount=document.getElementById("quizCount");
+const scoreDisplay=document.getElementById("scoreDisplay");
+const questionNumber=document.getElementById("questionNumber");
+
+const progressBar=document.getElementById("progressBar");
+const progressMeter=document.getElementById("progressMeter");
+const progressValue=document.getElementById("progressValue");
+
+const accuracyMeter=document.getElementById("accuracyMeter");
+const accuracyValue=document.getElementById("accuracyValue");
+const logicSignal=document.getElementById("logicSignal");
+
+const difficultyTag=document.getElementById("difficultyTag");
+const resultChip=document.getElementById("resultChip");
+
+const finalScore=document.getElementById("finalScore");
+const resultTitle=document.getElementById("resultTitle");
+const resultMessage=document.getElementById("resultMessage");
+
+const correctStat=document.getElementById("correctStat");
+const wrongStat=document.getElementById("wrongStat");
+const accuracyStat=document.getElementById("accuracyStat");
+
+const retryBtn=document.getElementById("retryBtn");
+const menuBtn=document.getElementById("menuBtn");
+
+const moduleStatus=document.getElementById("moduleStatus");
+
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
+function shuffle(array){
+    const copy=[...array];
+
+    for(let i=copy.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [copy[i],copy[j]]=[copy[j],copy[i]];
+    }
+
+    return copy;
+}
+
+
+function escapeHTML(text){
+    return String(text)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+
+function formatQuestion(text){
+    return escapeHTML(text)
+        .replace(/“([^”]+)”/g,"<em>“$1”</em>")
+        .replace(/"([^"]+)"/g,'<em>"$1"</em>');
+}
+
+
+function chapterName(chapter){
+
+    const names={
+        1:"CHAPTER 1 // CORRECT THINKING",
+        2:"CHAPTER 2 // LOGIC IN HEALTH SCIENCES",
+        3:"CHAPTER 3 // OPERATIONS OF THE MIND",
+        4:"CHAPTER 4 // JUDGMENT & PROPOSITIONS",
+        5:"CHAPTER 5 // REASONING & SYLLOGISM"
+    };
+
+    return names[chapter] || "INTEGRATED CHALLENGE";
+}
+
+
+/* =========================================================
+   QUESTION COUNTS
+========================================================= */
+
+document.querySelectorAll(".count-btn").forEach(button=>{
+
+    button.addEventListener("click",()=>{
+
+        document.querySelectorAll(".count-btn")
+            .forEach(btn=>btn.classList.remove("selected"));
+
+        button.classList.add("selected");
+
+        selectedCount=Number(button.dataset.count);
+    });
+
+});
+
+
+/* =========================================================
+   MODULE SELECTION
+========================================================= */
+
+document.querySelectorAll(".module").forEach(module=>{
+
+    module.addEventListener("click",()=>{
+
+        document.querySelectorAll(".module")
+            .forEach(m=>m.classList.remove("selected"));
+
+        module.classList.add("selected");
+
+        selectedChapter=module.dataset.chapter;
+
+        moduleStatus.textContent=
+            selectedChapter==="all"
+            ? "ALL MODULES"
+            : "CHAPTER "+selectedChapter;
+
+    });
+
+});
+
+
+/* =========================================================
+   START
+========================================================= */
+
+startBtn.addEventListener("click",startQuiz);
+
+
+function startQuiz(){
+
+    let pool;
+
+    if(selectedChapter==="all"){
+        pool=[...questionBank];
+    }else{
+        pool=questionBank.filter(
+            q=>String(q.chapter)===String(selectedChapter)
+        );
+    }
+
+    pool=shuffle(pool);
+
+    quizQuestions=pool.slice(
+        0,
+        Math.min(selectedCount,pool.length)
+    );
+
+    currentQuestion=0;
+    score=0;
+    answered=false;
+    answerHistory=[];
+
+    showScreen("quiz");
+
+    loadQuestion();
+}
+
+
+/* =========================================================
+   LOAD QUESTION
+========================================================= */
+
+function loadQuestion(){
+
+    answered=false;
+
+    const q=quizQuestions[currentQuestion];
+
+    explanationPanel.classList.remove("show");
+    explanationsContainer.innerHTML="";
+    choicesContainer.innerHTML="";
+
+    quizModule.textContent=chapterName(q.chapter);
+
+    quizCount.textContent=
+        `${String(currentQuestion+1).padStart(2,"0")} / ${quizQuestions.length}`;
+
+    questionNumber.textContent=
+        `QUESTION ${String(currentQuestion+1).padStart(2,"0")}`;
+
+    difficultyTag.textContent=q.difficulty;
+
+    questionText.innerHTML=formatQuestion(q.q);
+
+    scoreDisplay.textContent=score;
+
+    const progress=
+        (currentQuestion/quizQuestions.length)*100;
+
+    progressBar.style.width=`${progress}%`;
+
+    progressMeter.style.width=`${progress}%`;
+    progressValue.textContent=`${Math.round(progress)}%`;
+
+    updateAnalyzer();
+
+
+    const randomizedChoices=shuffle(
+        q.choices.map((choice,index)=>({
+            ...choice,
+            originalIndex:index
+        }))
+    );
+
+
+    randomizedChoices.forEach((choice,index)=>{
+
+        const button=document.createElement("button");
+
+        button.className="choice";
+
+        button.dataset.originalIndex=
+            choice.originalIndex;
+
+        const letter=
+            String.fromCharCode(65+index);
+
+        button.innerHTML=`
+            <span class="choice-letter">${letter}</span>
+            <span class="choice-text">${escapeHTML(choice.t)}</span>
+        `;
+
+        button.addEventListener("click",()=>{
+
+            answerQuestion(
+                button,
+                choice.originalIndex
+            );
+
+        });
+
+        choicesContainer.appendChild(button);
+
+    });
+
+}
+
+
+/* =========================================================
+   ANSWER
+========================================================= */
+
+function answerQuestion(button,selectedIndex){
+
+    if(answered) return;
+
+    answered=true;
+
+    const q=quizQuestions[currentQuestion];
+
+    const isCorrect=
+        selectedIndex===q.answer;
+
+    if(isCorrect){
+        score++;
+    }
+
+    answerHistory.push({
+        correct:isCorrect
+    });
+
+
+    const buttons=[
+        ...choicesContainer.querySelectorAll(".choice")
+    ];
+
+    buttons.forEach(choice=>{
+
+        choice.classList.add("disabled");
+
+        const originalIndex=
+            Number(choice.dataset.originalIndex);
+
+        if(originalIndex===q.answer){
+            choice.classList.add("correct");
+        }
+
+        if(
+            originalIndex===selectedIndex &&
+            !isCorrect
+        ){
+            choice.classList.add("selected-wrong");
+        }
+
+    });
+
+
+    showExplanation(
+        q,
+        selectedIndex,
+        isCorrect
+    );
+
+    scoreDisplay.textContent=score;
+
+    updateAnalyzer();
+}
+
+
+/* =========================================================
+   EXPLANATIONS
+========================================================= */
+
+function showExplanation(
+    question,
+    selectedIndex,
+    isCorrect
+){
+
+    explanationPanel.classList.add("show");
+
+    resultChip.textContent=
+        isCorrect
+        ? "CORRECT ANALYSIS"
+        : "INCORRECT ANALYSIS";
+
+    resultChip.className=
+        "result-chip "+
+        (isCorrect?"correct":"wrong");
+
+    explanationsContainer.innerHTML="";
+
+
+    question.choices.forEach((choice,index)=>{
+
+        const div=document.createElement("div");
+
+        let classes="explain-item";
+
+        if(index===question.answer){
+            classes+=" is-correct";
+        }
+
+        if(
+            index===selectedIndex &&
+            index!==question.answer
+        ){
+            classes+=" is-selected-wrong";
+        }
+
+        let label="";
+
+        if(index===question.answer){
+            label=" — ✓ CORRECT";
+        }
+
+        if(
+            index===selectedIndex &&
+            index!==question.answer
+        ){
+            label=" — ✕ YOUR ANSWER";
+        }
+
+        div.className=classes;
+
+        div.innerHTML=`
+            <strong>
+                ${String.fromCharCode(65+index)}.
+                ${escapeHTML(choice.t)}
+                ${label}
+            </strong>
+            <br>
+            ${escapeHTML(choice.e)}
+        `;
+
+        explanationsContainer.appendChild(div);
+
+    });
+
+
+    nextBtn.textContent=
+        currentQuestion===quizQuestions.length-1
+        ? "VIEW FINAL ANALYSIS →"
+        : "NEXT ANALYSIS →";
+}
+
+
+/* =========================================================
+   NEXT
+========================================================= */
+
+nextBtn.addEventListener("click",()=>{
+
+    currentQuestion++;
+
+    if(currentQuestion>=quizQuestions.length){
+        showResults();
+        return;
+    }
+
+    loadQuestion();
+});
+
+
+/* =========================================================
+   ANALYZER
+========================================================= */
+
+function updateAnalyzer(){
+
+    const total=answerHistory.length;
+
+    const correct=
+        answerHistory.filter(a=>a.correct).length;
+
+    const accuracy=
+        total===0
+        ? 0
+        : Math.round((correct/total)*100);
+
+    const progress=
+        quizQuestions.length===0
+        ? 0
+        : Math.round(
+            (currentQuestion/quizQuestions.length)*100
+        );
+
+    accuracyMeter.style.width=`${accuracy}%`;
+    accuracyValue.textContent=`${accuracy}%`;
+
+    progressMeter.style.width=`${progress}%`;
+    progressValue.textContent=`${progress}%`;
+
+
+    if(!answered){
+
+        logicSignal.textContent="ANALYZING";
+        logicSignal.style.color="var(--cyan)";
+
+    }else{
+
+        const latest=
+            answerHistory[answerHistory.length-1];
+
+        if(latest.correct){
+
+            logicSignal.textContent="STABLE";
+            logicSignal.style.color="var(--green)";
+
+        }else{
+
+            logicSignal.textContent="REVIEW";
+            logicSignal.style.color="var(--red)";
+        }
+    }
+}
+
+
+/* =========================================================
+   RESULTS
+========================================================= */
+
+function showResults(){
+
+    progressBar.style.width="100%";
+    progressMeter.style.width="100%";
+    progressValue.textContent="100%";
+
+    showScreen("result");
+
+    const total=quizQuestions.length;
+    const wrong=total-score;
+
+    const accuracy=
+        Math.round((score/total)*100);
+
+    finalScore.textContent=
+        `${score}/${total}`;
+
+    correctStat.textContent=score;
+    wrongStat.textContent=wrong;
+    accuracyStat.textContent=
+        `${accuracy}%`;
+
+
+    if(accuracy>=90){
+
+        resultTitle.textContent=
+            "LOGIC CORE: EXCELLENT";
+
+        resultMessage.textContent=
+            "Your reasoning was highly consistent. You handled concepts, propositions, evidence, and logical relationships with strong analytical control.";
+
+    }else if(accuracy>=75){
+
+        resultTitle.textContent=
+            "LOGIC CORE: STABLE";
+
+        resultMessage.textContent=
+            "Strong performance. You have the core concepts down, with a few areas that still need refinement.";
+
+    }else if(accuracy>=50){
+
+        resultTitle.textContent=
+            "LOGIC CORE: DEVELOPING";
+
+        resultMessage.textContent=
+            "You understand several concepts, but some reasoning patterns still need more review and practice.";
+
+    }else{
+
+        resultTitle.textContent=
+            "LOGIC CORE: REBOOT REQUIRED";
+
+        resultMessage.textContent=
+            "Several reasoning gaps were detected. Review the chapters and run another analysis session.";
+
+    }
+}
+
+
+/* =========================================================
+   SCREEN CONTROL
+========================================================= */
+
+function showScreen(name){
+
+    menuScreen.classList.remove("active");
+    quizScreen.classList.remove("active");
+    resultScreen.classList.remove("active");
+
+    if(name==="menu"){
+        menuScreen.classList.add("active");
+    }
+
+    if(name==="quiz"){
+        quizScreen.classList.add("active");
+    }
+
+    if(name==="result"){
+        resultScreen.classList.add("active");
+    }
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+}
+
+
+/* =========================================================
+   RETRY / MENU
+========================================================= */
+
+retryBtn.addEventListener("click",()=>{
+    startQuiz();
+});
+
+menuBtn.addEventListener("click",()=>{
+    showScreen("menu");
+});
+
+
+/* =========================================================
+   KEYBOARD CONTROLS
+========================================================= */
+
+document.addEventListener("keydown",event=>{
+
+    if(!quizScreen.classList.contains("active")){
+        return;
+    }
+
+    const key=event.key.toLowerCase();
+
+
+    if(
+        ["a","b","c","d"].includes(key) &&
+        !answered
+    ){
+
+        const index=
+            "abcd".indexOf(key);
+
+        const buttons=[
+            ...choicesContainer.querySelectorAll(".choice")
+        ];
+
+        if(buttons[index]){
+            buttons[index].click();
+        }
+
+        return;
+    }
+
+
+    if(
+        (event.key==="Enter" ||
+         event.key===" ") &&
+        answered
+    ){
+
+        event.preventDefault();
+
+        nextBtn.click();
+    }
+
+});
+
+
+/* =========================================================
+   INITIAL
+========================================================= */
+
+updateAnalyzer();
+
+</script>
+
+</body>
+</html>
